@@ -14,11 +14,8 @@ RUN apt-get update && \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Initialize and update Git submodule *before* trying to copy files from it
-# This ensures the submodule content is available in the build context
-RUN git submodule init && git submodule update --recursive
-
 # Copy only the requirements file first to leverage Docker layer caching
+# Assumes build context contains the submodule structure
 COPY csm-streaming-ref/requirements.txt ./
 
 # Install Python dependencies
@@ -26,22 +23,20 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir runpod
 
-# Copy the application code into the container
+# Copy the entire application submodule code into the container's /app directory
 COPY ./csm-streaming-ref/ /app/
 
-# Create necessary directories
+# Create necessary directories (some might be created by the COPY above)
 RUN mkdir -p /app/audio/user /app/audio/ai /app/audio/fallback /app/embeddings_cache /app/static /app/templates
 
 # For model handling, we'll use a download at runtime approach
-# We'll create directories where models will be downloaded
+# Create directories where models will be downloaded
 RUN mkdir -p /app/models/csm-1b /app/models/llm
 
 # Expose the port the application runs on
 EXPOSE 8000
 
-# Add an entrypoint script to handle model downloads and startup
-# Path is relative to the build context (repo root)
-COPY csm-streaming-ref/entrypoint.sh /app/
+# Make the entrypoint script executable (it should be at /app/entrypoint.sh now)
 RUN chmod +x /app/entrypoint.sh
 
 # Command to run the application
