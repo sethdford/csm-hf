@@ -36,7 +36,8 @@ RUN mkdir -p /app/models/csm-1b /app/models/llm
 EXPOSE 8000
 
 # Add an entrypoint script to handle model downloads and startup
-COPY entrypoint.sh /app/
+# Path is relative to the build context (repo root)
+COPY csm-streaming-ref/entrypoint.sh /app/
 RUN chmod +x /app/entrypoint.sh
 
 # Command to run the application
