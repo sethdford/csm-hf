@@ -14,6 +14,10 @@ RUN apt-get update && \
     git \
     && rm -rf /var/lib/apt/lists/*
 
+# Initialize and update Git submodule *before* trying to copy files from it
+# This ensures the submodule content is available in the build context
+RUN git submodule init && git submodule update --recursive
+
 # Copy only the requirements file first to leverage Docker layer caching
 COPY csm-streaming-ref/requirements.txt ./
 
