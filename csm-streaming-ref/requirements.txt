@@ -1,10 +1,10 @@
 --extra-index-url=https://download.pytorch.org/whl/cu124
-vllm==0.6.6
-torch==2.5.1
+vllm==0.20.0
+torch==2.8.0
 torchaudio==2.5.1
 torchvision==0.20.1
 tokenizers==0.21.0
-transformers==4.49.0
+transformers==5.0.0rc3
 huggingface_hub==0.28.1
 moshi==0.2.2
 sounddevice
